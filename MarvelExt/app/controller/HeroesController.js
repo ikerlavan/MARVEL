@@ -7,8 +7,7 @@ requires:['MarvelExt.utils.Constants'],
      * Usaremos esta variable para guardar y recuperar en el
      * localStorage los datos de consulta
      */
-    ,
-    userFilter         : null
+    ,userFilter         : null
 
     ,busquedaExacta    : false
     ,inicioPlaceHolder : 'Comienza por ...'
@@ -36,21 +35,21 @@ requires:['MarvelExt.utils.Constants'],
         var tpl = new Ext.XTemplate(
                 '<tpl for=".">',
                 '<tpl if="series!=null && series.items.length &gt; 0">',
-                '<div class="title">Series<span class="badge"> {series.available}</span></div>',
+                '<h4>Series<span class="badge badge-pill badge-info">{series.available}</h4>',
                 '<tpl for="series.items">',
                 '<div class="list-group">',
                 '<a id="{[this.getLinkId()]}" href="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
                 '</div>', 
                 '</tpl></tpl>',
                 '<tpl if="comics!=null && comics.items.length &gt; 0">',
-                '<div class="title">Comics<span class="badge"> {comics.available}</span></div>',
+                '<h4>Comics<span class="badge badge-pill badge-info">{comics.available}</span></h4>',
                 '<tpl for="comics.items">',
                 '<div class="list-group">',
                 '<a id="{[this.getLinkId()]}" href="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
                 '</div>',
                 '</tpl></tpl>',
                 '<tpl if="stories!=null && stories.items.length &gt; 0">',
-                '<div class="title">Stories<span class="badge"> {stories.available}</span></div>',
+                '<h4>Stories<span class="badge badge-pill badge-info">{stories.available}</span></h4>',
                 '<tpl for="stories.items">',
                 '<div class="list-group">',
                 '<a id="{[this.getLinkId()]}" href="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
@@ -64,43 +63,56 @@ requires:['MarvelExt.utils.Constants'],
                         return result;
                     },
                     addListener : function (id) {
-                        Ext.ComponentQuery.query('#'+id)[0]
+                        
+//                        {
+//                            'click':  function(e,obj){debugger;console.log('click')},
+//                            'tap'  : function(e,obj){debugger;console.log('tap')},
+//                            scope   : this
+//                        });
                         Ext.get(id).on(
-                                'click',
+                                'click', 
                                 function (e, obj) {
                                     e.stopEvent();
+                                    if(e.parentEvent)
+                                        e.parentEvent.stopEvent();
                                     Ext.Ajax.request({
                                         url    : Constants.contextPath + 'CURL/curl.php',
-                                        headers: {
-                                            'Access-Control-Allow-Origin': '*'
-                                        },
-                                        method : 'GET',
-                                        //async: false,
+                                        method : 'POST',
                                         params : {
                                             url : obj.href
                                         },
                                         success: function(response){
                                             var tpl = new Ext.XTemplate(
                                                     '<tpl for=".">',
+                                                    '<h3>{title}</h2>',
+                                                    '<p>Desde {startYear} hasta {endYear}</p>',
+                                                    '<div class="col-lg-12">',
+                                                    '<img class="col-lg-3 img-responsive" src="{thumbnail.path}/portrait_xlarge.{thumbnail.extension}" alt="{title}"></img>',
+                                                    '</div>',
                                                     '<tpl if="creators!=null && creators.items.length &gt; 0">',
                                                     '<ul class="list-group">',
-                                                    '<h3>Creators<span class="badge"> <span class="badge">{creators.available}</span></h3>',
+                                                    '<h4>Creators<span class="badge badge-pill badge-info">{creators.available}</span></h4>',
                                                     '<tpl for="creators.items">',
                                                     '<li class="list-group-item">{name} - {role}</li>',
                                                     '</tpl></ul>', 
                                                     '</tpl></tpl>');
-                                            var panel = Ext.getCmp('cardDetail');
-                                            var item = new Ext.container.Container({html:tpl.apply(Ext.JSON.decode(response.responseText).data.results)});
-                                            panel.add(item);
-//                                          item.show();
-                                            item.setVisible(true);
-                                            panel.setActiveItem(item);
-                                            return true;
+                                            var result = Ext.JSON.decode(response.responseText);
+                                            if(result.code === 200){
+                                                var panel = Ext.getCmp('cardDetail');
+                                                var item = new Ext.container.Container({html:tpl.apply(result.data.results)});
+                                                panel.add(item);
+//                                              item.show();
+                                                item.setVisible(true);
+                                                panel.setActiveItem(item);
+                                                return true;
+                                            }
+                                            return false;
+                                            
                                         } 
                                     });
 
                                     
-                                })
+                                },{preventDefault: true, stopEvent : true, stopPropagation : true, delay : 100})
                     }
                 });
         return tpl.apply(obj);
@@ -109,7 +121,7 @@ requires:['MarvelExt.utils.Constants'],
         var tpl = new Ext.XTemplate(
                 '<tpl for=".">',
                 '<div class="col-lg-12"><p>{description}</p>',
-                '<img class="col-lg-3 img-responsive" src="{img.path}/'+this.large+'.{img.extension}"></img>',
+                '<img class="col-lg-3 img-responsive" src="{img.path}/'+this.large+'.{img.extension}" alt="{name}"></img>',
                 '</div>',
                 '</tpl>');
         return tpl.apply(obj);
@@ -140,7 +152,7 @@ requires:['MarvelExt.utils.Constants'],
             }
         }
         
-        dataItem1 = {'img':record.get('thumbnail'),'description':record.get('description')};
+        dataItem1 = {'img':record.get('thumbnail'),'description':record.get('description'), 'name': record.get('name')};
         html1 = this.applyTemplateDescription(dataItem1);
         
         var win = this.getWindowCharacter();
@@ -150,9 +162,7 @@ requires:['MarvelExt.utils.Constants'],
 
         if (data) {
             html    = this.applyTemplateComics(data);
-            this.getViewModel().data.info = data;
-            this.getViewModel().data.html = html;
-            win     = this.createNewView();
+            win     = this.createNewView(record.get('name'));
             var items = [];
             if(html1!==''){
                 items.push({
@@ -168,15 +178,17 @@ requires:['MarvelExt.utils.Constants'],
                 });
             }
             
-            win.add({xtype : 'panel', 
+//            var p = Ext.create('MarvelExt.view.main.CardCharacters', {
+//                items : items
+//            });
+//          win.add(p);
+            
+          win.add({xtype : 'panel', 
                      layout : 'card', 
                      cardSwitchAnimation: 'flip',
-                     //autoScroll : true,
                      id          : 'cardDetail',
                      bodyPadding : 15,
                      autoScroll: true,
-//                     width: '100%',
-                     //height: '99%',
                      defaults:{
                        autoScroll   : true  
                      },
@@ -185,7 +197,6 @@ requires:['MarvelExt.utils.Constants'],
                              id: 'move-prev',
                              text: 'Back',
                              handler: function(btn) {
-                                 //this.navigate(btn.up("panel"), "prev");
                                  var layout = btn.up("panel").getLayout();
                                  layout["prev"]();
                                  Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
@@ -193,7 +204,7 @@ requires:['MarvelExt.utils.Constants'],
                              },
                              disabled: true
                          },
-                         '->', // greedy spacer so that the buttons are aligned to each side
+                         '->',
                          {
                              id: 'move-next',
                              text: 'Next',
@@ -209,31 +220,19 @@ requires:['MarvelExt.utils.Constants'],
                      ],
                      items : items
                     });
-                            
+                           
         }
-            //win.add(panel);
-            //win.add({xtype:'cardcharacters'});
-            win.show();
+            
+        win.show();
     }
-    ,navigate : function(panel, direction){
-    // This routine could contain business logic required to manage the navigation steps.
-    // It would call setActiveItem as needed, manage navigation button state, handle any
-    // branching logic that might be required, handle alternate actions like cancellation
-    // or finalization, etc.  A complete wizard implementation could get pretty
-    // sophisticated depending on the complexity required, and should probably be
-    // done as a subclass of CardLayout in a real-world implementation.
-    var layout = panel.getLayout();
-    layout[direction]();
-    Ext.getCmp('move-prev').setDisabled(!layout.getPrev());
-    Ext.getCmp('move-next').setDisabled(!layout.getNext());
-}
     ,getWindowCharacter : function (){
         return Ext.ComponentQuery.query('#infoCharacter')[0];
     }
-    ,createNewView   : function() {
+    ,createNewView   : function(name) {
         console.log("create new window");
         return Ext.create('Ext.window.Window', {
             itemId      : 'infoCharacter',
+            title       : name,
             //autoScroll  : true,
             layout      :'fit',
             width       : this.getView().getWidth() / 1.3,

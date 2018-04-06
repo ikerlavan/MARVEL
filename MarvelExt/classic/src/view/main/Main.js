@@ -70,7 +70,7 @@ Ext.define('MarvelExt.view.main.Main', {
                 tall: {
                     iconAlign: 'top',
                     textAlign: 'center',
-                    width: 120
+                    width: 100
                 }
             }
         }

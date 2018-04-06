@@ -25,7 +25,7 @@
             // For testing look for "?classic" or "?modern" in the URL to override
             // device detection default.
             //
-            if (s.match(/\bclassic\b/)) {
+            /* if (s.match(/\bclassic\b/)) {
                 profile = 'classic';
             }
             else if (s.match(/\bmodern\b/)) {
@@ -34,16 +34,19 @@
             else {
                 profile = tags.desktop ? 'classic' : 'modern';
                 //profile = tags.phone ? 'modern' : 'classic';
-            }
-
-            Ext.manifest = 'classic';//profile; // this name must match a build profile name
-
+            } */
+            /* profile = 'classic';
+            Ext.manifest = profile; / */// this name must match a build profile name
+			//return 'classic';
             // This function is called once the manifest is available but before
             // any data is pulled from it.
             //
             //return function (manifest) {
                 // peek at / modify the manifest object
             //};
+            profile = "classic";
+            Ext.manifest = profile;
+            //return profile;
         };
     </script>
 

@@ -1,21 +1,19 @@
 Ext.define('MarvelExt.view.main.MainController',{
-                    extend : 'Ext.app.ViewController',
+    extend : 'Ext.app.ViewController',
 
-					
-                    
-                    alias : 'controller.main'
+	alias : 'controller.main'
 
-                    ,onItemSelected : function (sender, record) {
-                        
-                        Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
-                    }
+    ,onItemSelected : function (sender, record) {
+        
+        Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
+    }
 
-                    ,
-                    onConfirm : function (choice) {
-                        if (choice === 'yes') {
-                            //
-                        }
-                    }
+    ,
+    onConfirm : function (choice) {
+        if (choice === 'yes') {
+            //
+        }
+    }
 
-                    
-                });
+    
+});

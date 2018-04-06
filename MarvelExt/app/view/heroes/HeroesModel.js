@@ -16,7 +16,7 @@ Ext.define('MarvelExt.view.heroes.HeroesModel', {
     ,data: {
         character   : {},
         info        : {},
-        html        : {}
+        html        : ''
    }
-
+   
 });

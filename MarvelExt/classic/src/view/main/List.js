@@ -9,7 +9,8 @@ Ext.define('MarvelExt.view.main.List', {
     viewModel       : 'heroes',
     requires		: [
         'MarvelExt.controller.HeroesController',
-        'MarvelExt.view.heroes.HeroesModel'
+        'MarvelExt.view.heroes.HeroesModel',
+        'MarvelExt.view.main.CardCharacters'
     ],
     img:null,
     plugins     : 'responsive',
@@ -19,19 +20,16 @@ Ext.define('MarvelExt.view.main.List', {
     },
     responsiveFormulas: {
         personalizedTall: function (context) {
-            console.log(context);
             if (context.tall || context.portrait){
-                console.log(Ext.getCmp('heroes'));                
             }
         },
         personalizedWide: function (context) {
-            console.log(context);
             if (context.wide || context.landscape){
-                console.log(Ext.getCmp('heroes'));
+
             }
         }
     },
-    title			: 'Personnel',
+    title			: 'Personajes',
     bind            : { store: '{Personaje}' },
     tbar			: [{
     	itemId		: 'txtSearch',

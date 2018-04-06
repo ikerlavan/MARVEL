@@ -521,7 +521,7 @@
                     "src": "classic/sass/save"
                 }
             }
-        },
+        }/*,
 
         "modern": {
             "toolkit": "modern",
@@ -532,7 +532,7 @@
                     "src": "modern/sass/save"
                 }
             }
-        }
+        }*/
     },
 
     /**

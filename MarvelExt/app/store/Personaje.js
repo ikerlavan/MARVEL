@@ -4,7 +4,7 @@ Ext.define('MarvelExt.store.Personaje', {
     alias           : 'store.personaje',
     storeId         : 'strPersonaje',
     model           : 'MarvelExt.model.Personaje',
-    leadingBufferZone : 100,
+    leadingBufferZone : 60,
     pageSize        : 20,
     // remoteFilter : true,
     // remoteSort : true,
