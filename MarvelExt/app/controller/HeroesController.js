@@ -38,21 +38,21 @@ requires:['MarvelExt.utils.Constants'],
                 '<h4>Series<span class="badge badge-pill badge-info">{series.available}</h4>',
                 '<tpl for="series.items">',
                 '<div class="list-group">',
-                '<a id="{[this.getLinkId()]}" href="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
+                '<a id="{[this.getLinkId()]}" href="#" uri="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
                 '</div>', 
                 '</tpl></tpl>',
                 '<tpl if="comics!=null && comics.items.length &gt; 0">',
                 '<h4>Comics<span class="badge badge-pill badge-info">{comics.available}</span></h4>',
                 '<tpl for="comics.items">',
                 '<div class="list-group">',
-                '<a id="{[this.getLinkId()]}" href="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
+                '<a id="{[this.getLinkId()]}" href="#" uri="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
                 '</div>',
                 '</tpl></tpl>',
                 '<tpl if="stories!=null && stories.items.length &gt; 0">',
                 '<h4>Stories<span class="badge badge-pill badge-info">{stories.available}</span></h4>',
                 '<tpl for="stories.items">',
                 '<div class="list-group">',
-                '<a id="{[this.getLinkId()]}" href="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
+                '<a id="{[this.getLinkId()]}" href="#" uri="{resourceURI}" class="list-group-item list-group-item-action">{name}</a>',
                 '</div>',
                 '</tpl></tpl>',
                 '</tpl>',{
@@ -72,14 +72,24 @@ requires:['MarvelExt.utils.Constants'],
                         Ext.get(id).on(
                                 'click', 
                                 function (e, obj) {
+//                                    var task = new Ext.util.DelayedTask(function(){
+//                                        
+//                                        
+//                                    });
+                                    var uri = obj.attributes['uri'].nodeValue;
                                     e.stopEvent();
-                                    if(e.parentEvent)
+                                    if(e.parentEvent){
                                         e.parentEvent.stopEvent();
+                                        //task.delay(1000);
+                                    }else{
+                                        //task.delay(10);
+                                    }
+                                    
                                     Ext.Ajax.request({
                                         url    : Constants.contextPath + 'CURL/curl.php',
                                         method : 'POST',
                                         params : {
-                                            url : obj.href
+                                            url : uri
                                         },
                                         success: function(response){
                                             var tpl = new Ext.XTemplate(
@@ -111,8 +121,9 @@ requires:['MarvelExt.utils.Constants'],
                                         } 
                                     });
 
+
                                     
-                                },{preventDefault: true, stopEvent : true, stopPropagation : true, delay : 100})
+                                },{preventDefault: true, stopEvent : true})
                     }
                 });
         return tpl.apply(obj);
