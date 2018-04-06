@@ -42,3 +42,17 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+/RemoteSystemsTempFiles
+/temp
+.cvsignore
+.sencha/
+build/
+modern/
+*.log
+.buildpath
+.metadata/
+ext/
+overrides/
+packages/
+CardCharacters.js
